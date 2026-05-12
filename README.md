@@ -118,5 +118,4 @@ Migration of monolith to microservices using Spring Boot and Spring Cloud.
  Author
 
 Rahul Prabhakar
-Java Project Engineer @ Crio.Do
 
