@@ -1,121 +1,153 @@
 # BuyBuddy Microservices
 
 ## Overview
-BuyBuddy is a **Spring Boot microservices-based e-commerce application** that demonstrates the migration of a monolithic system into smaller, independent services. It manages **Customers**, **Products**, and **Orders**, leveraging **Spring Cloud** components for service discovery and inter-service communication.
+
+BuyBuddy is a Spring Boot microservices-based e-commerce application designed to demonstrate the migration of a monolithic system into smaller, independently deployable services. The platform manages Customers, Products, and Orders using Spring Cloud components for service discovery, API routing, and inter-service communication.
 
 ---
 
-##  Architecture
-The project follows the **Microservices Architecture**, splitting the application into three services:
-1. **buy-buddy-customer-service** – Handles customer-related operations.
-2. **buy-buddy-product-service** – Manages product catalog and inventory.
-3. **buy-buddy-order-service** – Handles order creation, tracking, and associations.
+# Architecture
 
-All services register with:
-- **Eureka Server** – Acts as a **Service Registry**.
-- **Spring Cloud Gateway** – Routes external API calls to respective services.
-- **Feign Client** – Simplifies REST API calls between services.
+The application follows a Microservices Architecture with dedicated services for different business domains:
 
----
+- buy-buddy-customer-service – Handles customer-related operations
+- buy-buddy-product-service – Manages product catalog and inventory
+- buy-buddy-order-service – Handles order creation and order management
 
-##  Tech Stack
-- **Java 21**
-- **Spring Boot 3.4.x**
-- **Spring Cloud 2024.0.0**
-- **Spring Data JPA**
-- **Spring Cloud Gateway**
-- **Eureka Server & Feign Client**
-- **MySQL Database**
-- **Gradle Build Tool**
+Infrastructure and communication components:
+
+- Eureka Server – Service registry and discovery
+- Spring Cloud Gateway – Central API routing layer
+- OpenFeign – Inter-service REST communication
 
 ---
 
-##  Database Setup
-Create a MySQL database before running the services:
+# Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Backend | Java 21, Spring Boot 3.4.x, Spring Cloud |
+| Database | MySQL |
+| Microservices | Eureka Server, OpenFeign, Spring Cloud Gateway |
+| Cloud & DevOps | Docker, GitHub Actions, CI/CD Pipelines |
+| Build Tool | Gradle |
+| API Testing | Postman |
+
+---
+
+# Architecture Overview
+
+```text
+Client
+   ↓
+Spring Cloud Gateway
+   ↓
+---------------------------------------------------
+| Customer Service | Product Service | Order Service |
+---------------------------------------------------
+   ↓
+MySQL Database
+````
+
+---
+
+# Key Features
+
+* Microservices-based e-commerce backend architecture
+* Service discovery using Eureka Server
+* API Gateway routing using Spring Cloud Gateway
+* Inter-service communication using OpenFeign
+* Dockerized deployment workflows for backend services
+* CI/CD-based build workflows for automated application build processes
+* Scalable backend service orchestration and modular application design
+
+---
+
+# Database Setup
+
+Create the MySQL database:
+
 ```sql
 CREATE DATABASE buybuddy_microservices_mysql_db;
+```
 
+Update database credentials inside each service:
 
-Update credentials in each service’s application.properties:
-
+```properties
 spring.datasource.url=jdbc:mysql://localhost:3306/buybuddy_microservices_mysql_db
 spring.datasource.username=root
 spring.datasource.password=your_password
 spring.jpa.hibernate.ddl-auto=update
+```
+
+---
 
 # Running the Application
 
-Start Eureka Server:
+## Start Eureka Server
 
+```bash
 ./gradlew bootRun
+```
 
+Access Eureka Dashboard:
 
-Access registry at http://localhost:8761
+```text
+http://localhost:8761
+```
 
-Run all services:
+---
 
-buy-buddy-customer-service
+# Start Services
 
-buy-buddy-product-service
+Run the following services individually:
 
-buy-buddy-order-service
+* buy-buddy-customer-service
+* buy-buddy-product-service
+* buy-buddy-order-service
 
-Verify all services are registered with Eureka.
+Verify all services are successfully registered with Eureka Server.
 
- Testing
+---
 
-Use Postman to test API endpoints for Customers, Products, and Orders.
-Ensure all CRUD operations and inter-service calls work as expected.
+# Docker Setup
 
- Key Learnings
+Run containerized services using Docker Compose:
 
-Understanding of microservices architecture and communication.
+```bash
+docker-compose up -d
+```
 
-Implementing Service Discovery, API Gateway, and Load Balancing.
+---
 
-Migration of monolith to microservices using Spring Boot and Spring Cloud.
+# Testing
 
+Use Postman to test:
 
-Update credentials in each service’s application.properties:
+* Customer APIs
+* Product APIs
+* Order APIs
 
-spring.datasource.url=jdbc:mysql://localhost:3306/buybuddy_microservices_mysql_db
-spring.datasource.username=root
-spring.datasource.password=your_password
-spring.jpa.hibernate.ddl-auto=update
+Verify:
 
- Running the Application
+* CRUD operations
+* Inter-service communication
+* Gateway routing
+* Service discovery workflows
 
-Start Eureka Server:
+---
 
-./gradlew bootRun
+# Key Learnings
 
+* Understanding of microservices architecture and distributed systems
+* Implementation of Service Discovery, API Gateway, and inter-service communication
+* Dockerized deployment workflows and CI/CD-based build processes
+* Migration of monolithic architecture into scalable Spring Boot microservices
 
-Access registry at http://localhost:8761
+---
 
-Run all services:
-
-buy-buddy-customer-service
-
-buy-buddy-product-service
-
-buy-buddy-order-service
-
-Verify all services are registered with Eureka.
-
- Testing
-
-Use Postman to test API endpoints for Customers, Products, and Orders.
-Ensure all CRUD operations and inter-service calls work as expected.
-
-Key Learnings
-
-Understanding of microservices architecture and communication.
-
-Implementing Service Discovery, API Gateway, and Load Balancing.
-
-Migration of monolith to microservices using Spring Boot and Spring Cloud.
-
- Author
-
+# Author
 Rahul Prabhakar
 
+```
+```
