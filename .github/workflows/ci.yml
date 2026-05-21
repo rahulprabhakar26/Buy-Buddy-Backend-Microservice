@@ -40,12 +40,12 @@ jobs:
             ${{ runner.os }}-gradle-
 
       - name: Grant Gradle wrapper execute permission
-        run: chmod +x buy-buddy-backend-microservices/${{ matrix.service }}/gradlew
+        run: chmod +x ${{ matrix.service }}/gradlew
 
       - name: Build and test service
-        working-directory: buy-buddy-backend-microservices/${{ matrix.service }}
+        working-directory: ${{ matrix.service }}
         run: ./gradlew clean build -x test --no-daemon
 
       - name: Build Docker image
-        working-directory: buy-buddy-backend-microservices/${{ matrix.service }}
+        working-directory: ${{ matrix.service }}
         run: docker build -t ${{ matrix.service }} .
