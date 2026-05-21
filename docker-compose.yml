@@ -1,0 +1,94 @@
+version: "3.8"
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: buy-buddy-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-buybuddy_microservices_mysql_db}
+      MYSQL_USER: ${MYSQL_USER:-buybuddy}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-buybuddy_pass}
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - buy-buddy-network
+
+  eureka-server:
+    image: rahulprabhakar06/buy-buddy-eureka-server:latest
+    container_name: buy-buddy-eureka-server
+    ports:
+      - "8761:8761"
+    networks:
+      - buy-buddy-network
+
+  customer-service:
+    build:
+      context: ./buy-buddy-customer-service
+    image: rahulprabhakar06/buy-buddy-customer-service:latest
+    container_name: buy-buddy-customer-service
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE:-buybuddy_microservices_mysql_db}
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER:-root}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD:-root}
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
+    networks:
+      - buy-buddy-network
+
+  product-service:
+    image: rahulprabhakar06/buy-buddy-product-service:latest
+    container_name: buy-buddy-product-service
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE:-buybuddy_microservices_mysql_db}
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER:-root}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD:-root}
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
+    networks:
+      - buy-buddy-network
+
+  order-service:
+    image: rahulprabhakar06/buy-buddy-order-service:latest
+    container_name: buy-buddy-order-service
+    ports:
+      - "8083:8083"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE:-buybuddy_microservices_mysql_db}
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER:-root}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD:-root}
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
+    networks:
+      - buy-buddy-network
+
+volumes:
+  mysql_data:
+
+networks:
+  buy-buddy-network:
+    driver: bridge
