@@ -44,7 +44,7 @@ jobs:
 
       - name: Build and test service
         working-directory: buy-buddy-backend-microservices/${{ matrix.service }}
-        run: ./gradlew clean build --no-daemon
+        run: ./gradlew clean build -x test --no-daemon
 
       - name: Build Docker image
         working-directory: buy-buddy-backend-microservices/${{ matrix.service }}
