@@ -1,0 +1,51 @@
+name: Java Microservices CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service:
+          - buy-buddy-customer-service
+          - buy-buddy-order-service
+          - buy-buddy-product-service
+          - eureka-server
+    name: Build ${{ matrix.service }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Cache Gradle dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/build.gradle', '**/settings.gradle') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Grant Gradle wrapper execute permission
+        run: chmod +x buy-buddy-backend-microservices/${{ matrix.service }}/gradlew
+
+      - name: Build and test service
+        working-directory: buy-buddy-backend-microservices/${{ matrix.service }}
+        run: ./gradlew clean build --no-daemon
+
+      - name: Build Docker image
+        working-directory: buy-buddy-backend-microservices/${{ matrix.service }}
+        run: docker build -t ${{ matrix.service }} .
